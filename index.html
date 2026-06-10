@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>琦琦JimJim大冒險</title>
+  <meta name="theme-color" content="#48a076">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="琦琦JimJim">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Crect width="512" height="512" rx="112" fill="%2348a076"/%3E%3Ccircle cx="378" cy="126" r="48" fill="%23fff4e3"/%3E%3Cpath d="M70 350c58-76 108-114 151-114 32 0 63 23 94 68 25-26 52-39 82-39 47 0 92 42 135 126H70z" fill="%23f7dfbf"/%3E%3Cpath d="M96 168h92l24-38h92l24 38h88a40 40 0 0 1 40 40v172a40 40 0 0 1-40 40H96a40 40 0 0 1-40-40V208a40 40 0 0 1 40-40z" fill="%23ffffff" opacity=".22"/%3E%3Ccircle cx="256" cy="292" r="72" fill="none" stroke="%23ffffff" stroke-width="28"/%3E%3Ctext x="256" y="466" text-anchor="middle" font-family="Arial,sans-serif" font-size="48" font-weight="900" fill="%23ffffff"%3EJJ%3C/text%3E%3C/svg%3E'>
+  <style>
+    :root {
+      --ink: #222321;
+      --muted: #686b66;
+      --line: #deded8;
+      --paper: #fbfbf8;
+      --panel: #f3f2ed;
+      --green: #48a076;
+      --green-dark: #2f7354;
+      --green-soft: #e1f3eb;
+      --blue: #517c9a;
+      --amber: #d3943c;
+      --rose: #bd6d75;
+      --shadow: 0 12px 28px rgba(36, 42, 38, .08);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    button, input { font: inherit; }
+
+    .app {
+      min-height: 100vh;
+      padding: 22px clamp(14px, 3vw, 36px) 28px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) minmax(290px, 440px);
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(23px, 3vw, 34px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .progress-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .progress-title {
+      color: #4d504b;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .progress-value {
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #efeee9;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), #95d3b2);
+      transition: width .22s ease;
+    }
+
+    .complete-message {
+      display: none;
+      margin-top: 10px;
+      color: var(--green-dark);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .complete-message.show { display: block; }
+
+    .backup-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .backup-btn {
+      border: 1px solid #cfd8d0;
+      background: #fff;
+      color: var(--green-dark);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 900;
+      min-height: 38px;
+      touch-action: manipulation;
+    }
+
+    .finish-btn {
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+      border-radius: 14px;
+      padding: 14px 20px;
+      cursor: pointer;
+      font-size: clamp(25px, 3vw, 36px);
+      font-weight: 900;
+      min-height: 72px;
+      width: 100%;
+      margin-top: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .finish-btn:disabled {
+      border-color: #d7d7d0;
+      background: #ecebe6;
+      color: #969790;
+      cursor: not-allowed;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 20, 18, .46);
+      padding: 18px;
+      z-index: 30;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(560px, 100%);
+      max-height: min(720px, 92vh);
+      overflow: auto;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      box-shadow: 0 28px 70px rgba(0,0,0,.24);
+      padding: 20px;
+    }
+
+    .modal h2 {
+      margin: 0 0 10px;
+      font-size: 26px;
+      line-height: 1.25;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .field label {
+      color: #3f413d;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .field textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .primary-btn,
+    .plain-btn {
+      border-radius: 8px;
+      min-height: 42px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .primary-btn {
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+    }
+
+    .plain-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(118px, 1fr));
+      gap: 12px;
+      overflow-x: auto;
+      padding: 6px 4px 14px;
+      margin: -6px -4px 18px;
+      scroll-padding: 6px;
+      }
+
+    .tab {
+      min-height: 76px;
+      border: 1px solid #d0d0cb;
+      background: #fff;
+      border-radius: 15px;
+      cursor: pointer;
+      padding: 10px 12px;
+      text-align: center;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .tab:hover,
+    .tab.active {
+      border-color: var(--amber);
+      background: #fff4e3;
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .tab-date {
+      font-size: clamp(23px, 2.2vw, 31px);
+      line-height: 1.08;
+      white-space: nowrap;
+    }
+
+    .tab-city {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(350px, .95fr) minmax(410px, 1.05fr);
+      min-height: calc(100vh - 190px);
+      border-top: 1px solid var(--line);
+    }
+
+    .left {
+      display: grid;
+      grid-template-rows: minmax(280px, 42vh) minmax(340px, 1fr);
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .map-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid var(--line);
+      background: #e9ebe4;
+      overflow: hidden;
+    }
+
+    .map-panel iframe {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      border: 0;
+      display: block;
+      filter: saturate(.95);
+    }
+
+    .map-label {
+      background: #fff;
+      border: 1px solid rgba(222,222,216,.9);
+      border-radius: 8px 8px 0 0;
+      padding: 10px 12px;
+      color: var(--green-dark);
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(0,0,0,.05);
+      line-height: 1.35;
+    }
+
+    .detail {
+      padding: clamp(18px, 3vw, 32px);
+      overflow: auto;
+    }
+
+    .detail-card {
+      background: rgba(255,255,255,.82);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      color: var(--green-dark);
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .detail h2 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 2.4vw, 34px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .place-line {
+      color: #4d504b;
+      font-size: 18px;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      margin: 18px 0 8px;
+      color: #3c413c;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .text {
+      color: #3f413d;
+      line-height: 1.72;
+      white-space: pre-line;
+      margin: 0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid #cfd8d0;
+      color: var(--green-dark);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .upload-box {
+      margin-top: 18px;
+      border: 1px dashed #9bcbb7;
+      background: #f7fcf9;
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .upload-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid #b8d8c8;
+      background: var(--green);
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 900;
+      line-height: 1.2;
+      touch-action: manipulation;
+    }
+
+    .photo-preview {
+      margin-top: 12px;
+      display: none;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .photo-preview.show { display: flex; }
+
+    .photo-preview img {
+      width: 112px;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .danger-btn {
+      border: 1px solid #e4c2c2;
+      background: #fff7f7;
+      color: #9d3f46;
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .timeline-wrap {
+      background: #fff;
+      overflow: auto;
+      padding: 24px clamp(16px, 3vw, 38px);
+    }
+
+    .day-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+
+    .chip {
+      background: #f0f6f3;
+      border: 1px solid #d8e9df;
+      color: #35644f;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 54px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e0e0dc;
+    }
+
+    .area-label {
+      display: inline-block;
+      margin: 18px 0 12px -14px;
+      border-radius: 14px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 8px 14px;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) 42px;
+      gap: 10px;
+      padding: 11px 0 20px;
+      cursor: pointer;
+    }
+
+    .item::before {
+      content: "";
+      position: absolute;
+      left: -47px;
+      top: 23px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #a9ddcd;
+      border: 4px solid #fff;
+    }
+
+    .num {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green);
+      color: #fff;
+      font-weight: 900;
+      margin-top: 2px;
+    }
+
+    .item.done .num {
+      background: #2e8b62;
+    }
+
+    .item.active .num,
+    .item:hover .num {
+      outline: 4px solid var(--green-soft);
+    }
+
+    .item.active .num {
+      background: var(--amber);
+      outline-color: #f7dfbf;
+    }
+
+    .time {
+      color: #4f514d;
+      font-size: 21px;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    .item-title {
+      font-size: clamp(22px, 2vw, 29px);
+      line-height: 1.25;
+      font-weight: 900;
+      letter-spacing: 0;
+      margin-bottom: 7px;
+    }
+
+    .item-place {
+      color: #4f514d;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .camera {
+      border: 0;
+      background: transparent;
+      color: #a9aaa6;
+      cursor: pointer;
+      padding: 6px;
+      margin-top: 22px;
+      border-radius: 8px;
+    }
+
+    .camera:hover {
+      color: var(--green);
+      background: #f2f8f5;
+    }
+
+    .photo-done {
+      margin-top: 29px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: #222321;
+      color: #fff;
+      border-radius: 8px;
+      padding: 12px 14px;
+      transform: translateY(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 960px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(6, 160px);
+      }
+
+      .layout {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .left {
+        display: contents;
+        border-right: 0;
+      }
+
+      .map-panel { order: 1; }
+      .timeline-wrap { order: 2; }
+      .detail { order: 3; }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 14px 11px 24px;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(6, 136px);
+        gap: 9px;
+        padding-bottom: 16px;
+      }
+
+      .tab {
+        min-height: 68px;
+      }
+
+      .left {
+        grid-template-rows: 255px auto;
+      }
+
+      .map-panel {
+        min-height: 310px;
+      }
+
+      .detail {
+        padding: 15px;
+      }
+
+      .detail-card {
+        padding: 16px;
+      }
+
+      .timeline-wrap {
+        padding: 18px 12px 24px 15px;
+      }
+
+      .timeline {
+        padding-left: 42px;
+      }
+
+      .timeline::before {
+        left: 10px;
+      }
+
+      .item {
+        grid-template-columns: 33px minmax(0, 1fr) 34px;
+        gap: 8px;
+      }
+
+      .item::before {
+        left: -39px;
+        width: 17px;
+        height: 17px;
+      }
+
+      .num {
+        width: 33px;
+        height: 33px;
+      }
+
+      .time {
+        font-size: 17px;
+      }
+
+      .item-title {
+        font-size: 21px;
+      }
+
+      .item-place {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <h1>琦琦JimJim大冒險</h1>
+      </div>
+      <section class="progress-card" aria-label="照片完成度">
+        <div class="progress-head">
+          <span class="progress-title">照片完成率 <span id="progressCount">0 / 25</span></span>
+          <span id="progressValue" class="progress-value">0%</span>
+        </div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+        <div id="completeMessage" class="complete-message">恭喜完成 25 個景點照片任務，這趟旅程收集完成！</div>
+      </section>
+    </header>
+
+    <nav id="tabs" class="tabs" aria-label="每日行程"></nav>
+
+    <main class="layout">
+      <section class="left">
+        <div class="map-panel">
+          <div id="mapLabel" class="map-label">Google Maps</div>
+          <iframe id="mapFrame" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <section id="detail" class="detail" aria-live="polite"></section>
+      </section>
+
+      <section class="timeline-wrap">
+        <div id="daySummary" class="day-summary"></div>
+        <div id="timeline" class="timeline"></div>
+        <div id="finishSlot"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <input id="quickCameraInput" class="file-input" type="file" accept="image/*" capture="environment">
+
+  <div id="finishModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="finishTitle">
+    <form id="finishForm" class="modal">
+      <h2 id="finishTitle">廣島好好玩</h2>
+      <p class="muted">寫下想說的話</p>
+      <div class="field">
+        <label for="finishMessage">想說的話</label>
+        <textarea id="finishMessage" placeholder="寫下這趟旅行想留下的話..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button id="finishCancel" class="plain-btn" type="button">取消</button>
+        <button class="primary-btn" type="submit">分享</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const days = [
+      {
+        id: "0612",
+        date: "6/12",
+        weekday: "周五",
+        city: "倉敷",
+        map: "Kurashiki Bikan Historical Quarter",
+        theme: "落地取車，倉敷夜散步",
+        items: [
+          spot("15:00", "岡山", "岡山機場取車", "岡山機場", "抵達後先完成 Nissan 租車、確認 ETC、導航與滿油還車規則。", "先拍機場或租車櫃台作為旅程開場。", ["取車", "自駕", "起點"], [["岡山機場", "https://www.google.com/maps/search/?api=1&query=Okayama+Airport"]]),
+          spot("18:00-19:00", "倉敷", "The Onefive Garden Kurashiki Check-in", "The Onefive Garden Kurashiki", "放行李、整理相機與隨身物，晚上步行去美觀地區。", "第一晚不要排太滿，先把節奏放慢。", ["住宿", "倉敷"], [["飯店地圖", "https://www.google.com/maps/search/?api=1&query=The+Onefive+Garden+Kurashiki"]]),
+          spot("19:00-21:00", "倉敷", "倉敷美觀地區夜散步、晚餐", "倉敷美觀地區", "白壁、柳樹與運河夜色是第一晚重點。晚餐可選味噌豬排梅之木或 Furuichi 拌烏龍。", "梅之木 17:00-20:30，週三公休；Furuichi 11:00-19:00。", ["夜散步", "晚餐", "美觀地區"], [["梅之木", "https://maps.app.goo.gl/kY1GYHhF7Vk7vEG47"], ["Furuichi", "https://maps.app.goo.gl/mKacb32tc8jbmUzd8"]])
+        ]
+      },
+      {
+        id: "0613",
+        date: "6/13",
+        weekday: "周六",
+        city: "倉敷 / 岡山",
+        map: "Okayama Korakuen Garden",
+        theme: "美觀地區、後樂園、岡山市購物",
+        items: [
+          spot("08:30-10:00", "倉敷", "美觀地區晨間散步與船票", "倉敷美觀地區", "早上人較少，適合拍運河、白壁街景，也可以先買遊船票。", "若想搭船，先確認當日班次與天候。", ["晨間", "拍照", "遊船"], [["美觀地區", "https://www.google.com/maps/search/?api=1&query=Kurashiki+Bikan+Historical+Quarter"]]),
+          spot("10:00-12:00", "倉敷", "林源十郎商店、GOHOBI、果物小町", "林源十郎商店周邊", "文創選物、伴手禮、膠原蛋白果凍與冰品集中在這段慢慢逛。", "林源十郎商店地址：2 Chome-23-10 Achi。", ["選物", "甜點", "伴手禮"], [["果物小町", "https://maps.app.goo.gl/NZG7LMmzGtFruJYr5"]]),
+          spot("12:00-13:00", "倉敷", "倉敷順路午餐", "倉敷美觀地區周邊", "不排隊太久，依當天路線找順路店家。", "保留彈性，下午還要採買與移動。", ["午餐", "彈性"]),
+          spot("13:00-15:00", "倉敷", "倉敷帆布、牛仔布小物、備前燒", "倉敷美觀地區", "下午補逛帆布、牛仔布小物與備前燒，把伴手禮一次收齊。", "易碎物品可先集中包好放車上。", ["採買", "帆布", "備前燒"]),
+          spot("16:00-18:00", "岡山", "岡山後樂園、岡山城外觀", "岡山後樂園 / 岡山城", "傍晚散步即可，不追求排滿；後樂園與岡山城外觀很適合拍照。", "若倉敷逛太久，岡山段可縮短成外觀散步。", ["庭園", "城", "傍晚"], [["後樂園", "https://www.google.com/maps/search/?api=1&query=Okayama+Korakuen"], ["岡山城", "https://www.google.com/maps/search/?api=1&query=Okayama+Castle"]]),
+          spot("18:00-21:30", "岡山", "岡山市晚餐、BIC CAMERA", "岡山站前", "晚餐可選味司野村牛肉醬汁炸豬排丼，或もり牡蠣燒；BIC CAMERA 10:00-20:30。", "採買目標：recolte cordless bonne RCP-7、隨身刀行李。", ["晚餐", "購物", "岡山站"], [["味司野村", "https://maps.app.goo.gl/Ck9YEXfXhZqc9JCQ9"], ["もり", "https://maps.app.goo.gl/1ksDtrEtUUsZtPap6"]])
+        ]
+      },
+      {
+        id: "0614",
+        date: "6/14",
+        weekday: "周日",
+        city: "尾道 / 廣島",
+        map: "Onomichi Hiroshima",
+        theme: "尾道山海散步，抵達廣島",
+        items: [
+          spot("09:00-11:00", "尾道", "千光寺山纜車、千光寺公園", "千光寺山纜車 / 千光寺公園", "搭纜車上山，再從千光寺公園一路往下走，視野、坡道與寺院都很有尾道味。", "纜車 09:00 開始；週日人多，早點抵達。", ["纜車", "展望", "尾道"], [["千光寺山纜車", "https://www.google.com/maps/search/?api=1&query=Senkoji+Ropeway"]]),
+          spot("10:30-11:30", "尾道", "貓之細道", "貓之細道", "坡道間的小路、招財貓與老屋細節，適合慢慢拍。", "下坡路段留意鞋子與階梯。", ["坡道", "小路", "拍照"], [["貓之細道", "https://www.google.com/maps/search/?api=1&query=Neko+no+Hosomichi+Onomichi"]]),
+          spot("11:00-12:00", "尾道", "尾道拉麵午餐", "尾道市區", "候選：尾道拉麵壹番館，或尾道拉麵喰海。", "壹番館 11:00-18:00 週五公休；喰海週日 10:00-19:00。", ["拉麵", "午餐"], [["壹番館", "https://maps.app.goo.gl/ui5ZqA5KXhfS1XdK8"], ["喰海", "https://maps.app.goo.gl/U9CrbhVnG4qA6byQ7"], ["拉麵推薦", "https://tw.wamazing.com/media/article/a-1392/"]]),
+          spot("12:00-14:30", "尾道", "尾道本通商店街與海岸邊", "尾道本通商店街 / 海岸邊", "商店街、海岸線與渡船景色可以串成一段輕鬆散步。", "POUR specialty coffee 週日 07:00-14:30，可作咖啡停留。", ["老街", "海岸", "咖啡"]),
+          spot("17:00-20:30", "廣島", "廣島本通、PARCO、唐吉軻德", "廣島本通商店街", "抵達廣島後逛 3COINS、BEAMS、鬼塚虎、無印、PARCO、唐吉軻德。", "PARCO 10:00-20:30；1F 鬼塚虎、3F AINZ&TULPE、7F LOFT、新館 7F 無印。", ["購物", "本通", "PARCO"]),
+          spot("20:30-21:30", "廣島", "廣島燒晚餐：藥研堀 八昌", "藥研堀 八昌", "第一晚建議吃廣島燒，八昌是經典候選。", "營業時間 16:00-22:30，熱門店可能排隊。", ["廣島燒", "晚餐"], [["藥研堀八昌", "https://www.google.com/maps/search/?api=1&query=Yagenbori+Hassho+Hiroshima"]])
+        ]
+      },
+      {
+        id: "0615",
+        date: "6/15",
+        weekday: "周一",
+        city: "宮島 / 廣島",
+        map: "Itsukushima Shrine Miyajima",
+        theme: "嚴島神社與宮島半日",
+        items: [
+          spot("08:30-09:00", "宮島", "宮島口搭船前往宮島", "宮島口 → 宮島", "車停宮島口，搭 JR Ferry 或其他渡輪上島。", "不要開車上島；回程也避免太晚。", ["渡輪", "宮島"], [["宮島口", "https://www.google.com/maps/search/?api=1&query=Miyajimaguchi+Ferry"]]),
+          spot("10:00-12:00", "宮島", "嚴島神社、大鳥居", "嚴島神社 / 大鳥居", "滿潮與退潮看到的風景不同，大鳥居與神社是本日主照片任務。", "出發前查潮汐，依潮位安排拍攝角度。", ["神社", "大鳥居", "潮汐"], [["嚴島神社", "https://www.google.com/maps/search/?api=1&query=Itsukushima+Shrine"]]),
+          spot("12:00-13:30", "宮島", "宮島表參道午餐與邊走邊吃", "宮島表參道商店街", "牡蠣、穴子飯、楓葉饅頭都適合邊走邊吃。", "熱門餐廳若排太久，可改小吃型午餐。", ["牡蠣", "穴子飯", "小吃"]),
+          spot("13:30-15:30", "宮島", "紅葉谷公園或彌山纜車", "紅葉谷公園 / 彌山", "輕鬆版選紅葉谷，體力版選彌山纜車。", "依天氣與腳力決定，不用硬爬。", ["公園", "纜車", "彌山"], [["紅葉谷公園", "https://www.google.com/maps/search/?api=1&query=Momijidani+Park"], ["彌山", "https://www.google.com/maps/search/?api=1&query=Mount+Misen"]]),
+          spot("18:30-21:30", "廣島", "廣島晚餐第二回：牡蠣傳候選", "廣島市區", "可以換不同料理，候選牡蠣傳：牡蠣與穴子飯。", "牡蠣傳 11:00-14:00、17:00-22:00，週日週一公休；當天若不開可換店。", ["晚餐", "牡蠣", "穴子飯"], [["牡蠣傳", "https://www.google.com/maps/search/?api=1&query=Kakiden+Hiroshima"]])
+        ]
+      },
+      {
+        id: "0616",
+        date: "6/16",
+        weekday: "周二",
+        city: "廣島 / 岩國",
+        map: "Hiroshima Peace Memorial Museum",
+        theme: "和平紀念公園，下午岩國或雨備",
+        items: [
+          spot("08:00-11:00", "廣島", "和平紀念資料館、原爆圓頂館、和平紀念公園", "廣島和平紀念公園周邊", "資料館至少抓 2 小時，早上去時間和心情都比較完整。", "這段不要排太趕；如果停留較久，下午岩國可改備案。", ["資料館", "和平公園", "原爆圓頂"], [["和平紀念資料館", "https://www.google.com/maps/search/?api=1&query=Hiroshima+Peace+Memorial+Museum"]]),
+          spot("11:30-12:30", "廣島", "本通商店街散步、簡單午餐", "本通 / 紙屋町", "離和平公園近，適合接簡單午餐與短暫購物。", "中午不排大餐，保留岩國移動彈性。", ["午餐", "本通", "紙屋町"]),
+          spot("13:45-15:15", "岩國", "錦帶橋、河岸散步", "岩國錦帶橋", "木造拱橋與河岸視野很適合拍照，是下午半日岩國重點。", "下午行程較緊，天氣差或資料館停太久就取消岩國。", ["錦帶橋", "河岸", "岩國"], [["錦帶橋", "https://www.google.com/maps/search/?api=1&query=Kintaikyo+Bridge"]]),
+          spot("15:15-17:30", "岩國", "岩國點心、早晚餐彈性停留", "錦帶橋周邊", "下午茶、小吃或提早晚餐，吃完再回廣島。", "不排完整午餐，改點心型停留；雨天備案可改吳市或廣島市區。", ["小吃", "彈性", "備案"])
+        ]
+      },
+      {
+        id: "0617",
+        date: "6/17",
+        weekday: "周三",
+        city: "廣島 / 岡山機場",
+        map: "Okayama Airport",
+        route: ["廣島站", "岡山機場"],
+        theme: "輕鬆採買，還車返程",
+        items: [
+          spot("08:30-10:00", "廣島", "廣島市區早餐與最後補買", "廣島市區 / 廣島站周邊", "最後一天只排輕鬆早餐、伴手禮與忘記買的小物，不排和平紀念資料館。", "10:30 前出發去岡山機場，預留加油、還車、Check-in。", ["早餐", "伴手禮", "返程"], [["岡山機場", "https://www.google.com/maps/search/?api=1&query=Okayama+Airport"]])
+        ]
+      }
+    ];
+
+    function spot(time, area, title, place, feature, tips, tags = [], links = []) {
+      return { time, area, title, place, feature, tips, tags, links };
+    }
+
+    const totalSpots = days.reduce((sum, day) => sum + day.items.length, 0);
+    const $ = (selector) => document.querySelector(selector);
+    const photoStoreKey = "okayamaHiroshimaTripPhotosV2";
+    const photoDbName = "okayamaHiroshimaTripPhotoDb";
+    const photoObjectStore = "photos";
+    function loadPhotos() {
+      try {
+        return JSON.parse(localStorage.getItem(photoStoreKey) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    const state = {
+      activeDay: days[0].id,
+      selectedKey: null,
+      mapMode: "route",
+      photos: loadPhotos()
+    };
+
+    const cameraIcon = `<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M8 7l1.4-2h5.2L16 7h2.8A2.2 2.2 0 0 1 21 9.2v7.6a2.2 2.2 0 0 1-2.2 2.2H5.2A2.2 2.2 0 0 1 3 16.8V9.2A2.2 2.2 0 0 1 5.2 7H8Z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="2"/></svg>`;
+
+    function keyFor(day, index) {
+      return `${day.id}-${index}`;
+    }
+
+    function allPhotoKeys() {
+      return days.flatMap(day => day.items.map((_, index) => keyFor(day, index)));
+    }
+
+    function photoDoneCount() {
+      return allPhotoKeys().filter(key => state.photos[key]).length;
+    }
+
+    function activeDay() {
+      return days.find(day => day.id === state.activeDay);
+    }
+
+    function selectedEntry() {
+      const day = activeDay();
+      const rawIndex = state.selectedKey?.startsWith(day.id) ? Number(state.selectedKey.split("-")[1]) : 0;
+      const index = Number.isInteger(rawIndex) && day.items[rawIndex] ? rawIndex : 0;
+      state.selectedKey = keyFor(day, index);
+      return { day, item: day.items[index], index, key: state.selectedKey };
+    }
+
+    function savePhotos() {
+      try {
+        localStorage.setItem(photoStoreKey, JSON.stringify(state.photos));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function openPhotoDb() {
+      return new Promise((resolve, reject) => {
+        if (!("indexedDB" in window)) {
+          reject(new Error("IndexedDB unavailable"));
+          return;
+        }
+        const request = indexedDB.open(photoDbName, 1);
+        request.onerror = () => reject(request.error);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(photoObjectStore)) {
+            db.createObjectStore(photoObjectStore, { keyPath: "key" });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+      });
+    }
+
+    function withPhotoStore(mode, action) {
+      return openPhotoDb().then(db => new Promise((resolve, reject) => {
+        const transaction = db.transaction(photoObjectStore, mode);
+        const store = transaction.objectStore(photoObjectStore);
+        const result = action(store);
+        transaction.oncomplete = () => {
+          db.close();
+          resolve(result);
+        };
+        transaction.onerror = () => {
+          db.close();
+          reject(transaction.error);
+        };
+      }));
+    }
+
+    async function loadDbPhotos() {
+      const records = await withPhotoStore("readonly", store => {
+        const request = store.getAll();
+        return new Promise((resolve, reject) => {
+          request.onsuccess = () => resolve(request.result || []);
+          request.onerror = () => reject(request.error);
+        });
+      });
+      const photos = {};
+      records.forEach(record => {
+        if (record && record.key && record.dataUrl) photos[record.key] = record.dataUrl;
+      });
+      return photos;
+    }
+
+    async function persistPhoto(key, dataUrl) {
+      state.photos[key] = dataUrl;
+      const localSaved = savePhotos();
+      try {
+        await withPhotoStore("readwrite", store => store.put({ key, dataUrl, updatedAt: Date.now() }));
+        return true;
+      } catch {
+        return localSaved;
+      }
+    }
+
+    async function removePhoto(key) {
+      delete state.photos[key];
+      savePhotos();
+      try {
+        await withPhotoStore("readwrite", store => store.delete(key));
+      } catch {
+        // localStorage fallback has already been updated.
+      }
+    }
+
+    function backupPayload() {
+      return {
+        type: "okayama-hiroshima-trip-photo-backup",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        photos: state.photos
+      };
+    }
+
+    function exportBackup() {
+      const payload = JSON.stringify(backupPayload());
+      const blob = new Blob([payload], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      link.href = url;
+      link.download = `trip-photo-backup-${stamp}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function importBackupFile(file) {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const photos = data.photos || data;
+      if (!photos || typeof photos !== "object") throw new Error("Invalid backup");
+      state.photos = { ...state.photos, ...photos };
+      savePhotos();
+      await Promise.all(Object.entries(photos).map(([key, dataUrl]) => persistPhoto(key, dataUrl)));
+      renderAll();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function uniqueStops(stops) {
+      const seen = new Set();
+      return stops
+        .map(stop => String(stop || "").replace(/\s*\/\s*/g, " ").trim())
+        .filter(stop => {
+          if (!stop || seen.has(stop)) return false;
+          seen.add(stop);
+          return true;
+        });
+    }
+
+    function dayRoute(day) {
+      return uniqueStops(day.route || day.items.map(item => item.place));
+    }
+
+    function mapsRouteUrl(stops) {
+      if (stops.length <= 1) {
+        return mapsSpotUrl(stops[0] || "Okayama");
+      }
+      const origin = encodeURIComponent(stops[0]);
+      const destinationPath = stops.slice(1).map(encodeURIComponent).join("%20to%3A");
+      return `https://maps.google.com/maps?output=embed&saddr=${origin}&daddr=${destinationPath}`;
+    }
+
+    function mapsSpotUrl(query) {
+      return `https://maps.google.com/maps?output=embed&q=${encodeURIComponent(query || "Okayama")}`;
+    }
+
+    function renderTabs() {
+      $("#tabs").innerHTML = days.map(day => `
+        <button class="tab ${day.id === state.activeDay ? "active" : ""}" type="button" data-day="${day.id}">
+          <div class="tab-date">${day.date} ${day.weekday}</div>
+          <div class="tab-city">${escapeHtml(day.city)}</div>
+        </button>
+      `).join("");
+    }
+
+    function renderProgress() {
+      const doneCount = photoDoneCount();
+      const percent = Math.round(doneCount / totalSpots * 100);
+      $("#progressFill").style.width = `${percent}%`;
+      $("#progressValue").textContent = `${percent}%`;
+      $("#progressCount").textContent = `${doneCount} / ${totalSpots}`;
+      $("#completeMessage").classList.toggle("show", doneCount === totalSpots);
+    }
+
+    function renderMap() {
+      const { day, item } = selectedEntry();
+      if (state.mapMode === "spot") {
+        $("#mapFrame").src = mapsSpotUrl(`${item.place} ${item.area}`);
+        $("#mapLabel").textContent = `${day.date} 座標：${item.place}`;
+        return;
+      }
+      const stops = dayRoute(day);
+      $("#mapFrame").src = mapsRouteUrl(stops);
+      $("#mapLabel").textContent = `${day.date} 路線：${stops.join(" → ")}`;
+    }
+
+    function renderSummary(day) {
+      const done = day.items.filter((_, index) => state.photos[keyFor(day, index)]).length;
+      $("#daySummary").innerHTML = `
+        <span class="chip">${day.date} ${day.weekday}</span>
+        <span class="chip">${escapeHtml(day.theme)}</span>
+        <span class="chip">${done} / ${day.items.length} 已上傳</span>
+      `;
+    }
+
+    function renderFinishSlot(day) {
+      $("#finishSlot").innerHTML = day.id === "0617"
+        ? `<button id="finishTrip" class="finish-btn" type="button" ${photoDoneCount() === totalSpots ? "" : "disabled"}>廣島好好玩</button>`
+        : "";
+    }
+
+    function renderTimeline() {
+      const day = activeDay();
+      let lastArea = "";
+      $("#timeline").innerHTML = day.items.map((item, index) => {
+        const key = keyFor(day, index);
+        const hasPhoto = Boolean(state.photos[key]);
+        const area = item.area !== lastArea ? `<div class="area-label">${escapeHtml(item.area)}</div>` : "";
+        lastArea = item.area;
+        return `
+          ${area}
+          <article class="item ${state.selectedKey === key ? "active" : ""} ${hasPhoto ? "done" : ""}" data-key="${key}" data-index="${index}">
+            <div class="num">${hasPhoto ? "✓" : index + 1}</div>
+            <div>
+              <div class="time">${escapeHtml(item.time)}</div>
+              <div class="item-title">${escapeHtml(item.title)}</div>
+              <div class="item-place">📍 ${escapeHtml(item.place)}</div>
+            </div>
+            ${hasPhoto ? `<div class="photo-done" title="已上傳照片">✓</div>` : `<button class="camera" type="button" title="上傳照片" data-key="${key}" data-index="${index}">${cameraIcon}</button>`}
+          </article>
+        `;
+      }).join("");
+      renderSummary(day);
+      renderFinishSlot(day);
+    }
+
+    function renderDetail() {
+      const { day, item, index, key } = selectedEntry();
+      const photo = state.photos[key];
+      $("#detail").innerHTML = `
+        <article class="detail-card">
+          <div class="eyebrow">${day.date} ${day.weekday} · ${escapeHtml(item.area)} · 任務 ${index + 1}</div>
+          <h2>${escapeHtml(item.title)}</h2>
+          <div class="place-line">${escapeHtml(item.time)} ｜ ${escapeHtml(item.place)}</div>
+
+          <div class="section-title">行程特色</div>
+          <p class="text">${escapeHtml(item.feature)}</p>
+
+          <div class="section-title">實用 tips</div>
+          <p class="text">${escapeHtml(item.tips)}</p>
+
+          <div class="tags">${item.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join("")}</div>
+          ${item.links.length ? `<div class="section-title">地圖連結</div><div class="links">${item.links.map(([label, url]) => `<a class="link" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">↗ ${escapeHtml(label)}</a>`).join("")}</div>` : ""}
+
+          ${photo ? `
+            <div class="upload-box">
+              <strong>已上傳照片</strong>
+              <p class="muted">照片已縮小並留存在目前這台裝置的瀏覽器裡。需要重拍時可以先移除照片，再點右側時間軸的相機。</p>
+              <div class="upload-actions">
+                <button id="removePhoto" class="danger-btn" type="button">移除照片，重新拍照</button>
+              </div>
+              <div class="photo-preview show">
+                <img src="${photo}" alt="${escapeHtml(item.title)} 已上傳照片">
+                <div><strong>已完成</strong><p class="muted">這個景點已列入完成率。</p></div>
+              </div>
+            </div>
+          ` : ""}
+        </article>
+      `;
+    }
+
+    function renderAll() {
+      renderTabs();
+      renderProgress();
+      renderDetail();
+      renderTimeline();
+      renderMap();
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function canvasToJpeg(source, width, height) {
+      const max = 720;
+      const scale = Math.min(1, max / Math.max(width, height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(height * scale));
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL("image/jpeg", .68);
+    }
+
+    async function shrinkWithBitmap(file) {
+      if (!("createImageBitmap" in window)) throw new Error("createImageBitmap unavailable");
+      const bitmap = await createImageBitmap(file);
+      const dataUrl = canvasToJpeg(bitmap, bitmap.width, bitmap.height);
+      if (bitmap.close) bitmap.close();
+      return dataUrl;
+    }
+
+    function shrinkWithImageElement(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => resolve(canvasToJpeg(img, img.naturalWidth || img.width, img.naturalHeight || img.height));
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function preparePhoto(file) {
+      try {
+        return await shrinkWithBitmap(file);
+      } catch {
+        return await shrinkWithImageElement(file);
+      }
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 6) {
+      const words = String(text || "").split(/(\s+)/).filter(Boolean);
+      const lines = [];
+      let line = "";
+      words.forEach(word => {
+        const test = line + word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line.trim());
+          line = word.trimStart();
+        } else {
+          line = test;
+        }
+      });
+      if (line) lines.push(line.trim());
+      lines.slice(0, maxLines).forEach((row, index) => ctx.fillText(row, x, y + index * lineHeight));
+      return y + Math.min(lines.length, maxLines) * lineHeight;
+    }
+
+    function drawCover(ctx, img, x, y, width, height) {
+      const ratio = Math.max(width / img.width, height / img.height);
+      const drawWidth = img.width * ratio;
+      const drawHeight = img.height * ratio;
+      ctx.drawImage(img, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+    }
+
+    function roundedRect(ctx, x, y, width, height, radius) {
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y, width, height, radius);
+        return;
+      }
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+    }
+
+    async function createFinalCollage(message) {
+      const entries = days.flatMap(day => day.items.map((item, index) => ({
+        day,
+        item,
+        index,
+        key: keyFor(day, index),
+        src: state.photos[keyFor(day, index)]
+      })));
+      if (entries.some(entry => !entry.src)) throw new Error("Missing photos");
+
+      const images = await Promise.all(entries.map(entry => loadImage(entry.src)));
+      const canvas = document.createElement("canvas");
+      canvas.width = 3000;
+      canvas.height = 4000;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fbfbf8";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#222321";
+      ctx.font = "900 122px Arial, sans-serif";
+      ctx.fillText("琦琦JimJim大冒險", 150, 210);
+      ctx.font = "700 58px Arial, sans-serif";
+      ctx.fillStyle = "#4b5b52";
+      ctx.fillText("25 個景點照片收集完成", 150, 300);
+
+      ctx.font = "500 64px Arial, sans-serif";
+      ctx.fillStyle = "#2f3b35";
+      const textBottom = wrapCanvasText(ctx, message, 150, 430, 2700, 84, 5);
+
+      const startY = Math.max(720, textBottom + 110);
+      const gap = 36;
+      const cols = 5;
+      const cellW = Math.floor((canvas.width - 300 - gap * (cols - 1)) / cols);
+      const cellH = 500;
+      entries.forEach((entry, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = 150 + col * (cellW + gap);
+        const y = startY + row * (cellH + 132);
+        ctx.save();
+        ctx.beginPath();
+        roundedRect(ctx, x, y, cellW, cellH, 30);
+        ctx.clip();
+        drawCover(ctx, images[i], x, y, cellW, cellH);
+        ctx.restore();
+        ctx.strokeStyle = "#deded8";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(x, y, cellW, cellH);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x, y + cellH - 72, cellW, 72);
+        ctx.fillStyle = "#2f7354";
+        ctx.font = "800 36px Arial, sans-serif";
+        ctx.fillText(`${i + 1}. ${entry.day.date} ${entry.item.title}`.slice(0, 18), x + 20, y + cellH - 24);
+      });
+
+      ctx.fillStyle = "#686b66";
+      ctx.font = "500 40px Arial, sans-serif";
+      ctx.fillText(`Created ${new Date().toLocaleString("zh-TW")}`, 150, canvas.height - 96);
+
+      return new Promise(resolve => canvas.toBlob(blob => resolve(blob), "image/jpeg", .92));
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function submitFinish(message) {
+      showToast("正在合成 25 張照片...");
+      const blob = await createFinalCollage(message);
+      const file = new File([blob], "hiroshima-love-collage.jpg", { type: "image/jpeg" });
+      downloadBlob(blob, file.name);
+
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        try {
+          await navigator.share({ files: [file], title: "廣島好好玩", text: message });
+          return;
+        } catch {
+          // The image has already been downloaded.
+        }
+      }
+    }
+
+    document.addEventListener("click", event => {
+      const tab = event.target.closest(".tab");
+      if (tab) {
+        state.activeDay = tab.dataset.day;
+        state.selectedKey = null;
+        state.mapMode = "route";
+        renderAll();
+        return;
+      }
+
+      const camera = event.target.closest(".camera");
+      if (camera) {
+        event.stopPropagation();
+        state.selectedKey = camera.dataset.key;
+        state.mapMode = "spot";
+        renderTimeline();
+        renderDetail();
+        renderMap();
+        $("#quickCameraInput").value = "";
+        $("#quickCameraInput").click();
+        return;
+      }
+
+      const item = event.target.closest(".item");
+      if (item) {
+        state.selectedKey = item.dataset.key;
+        state.mapMode = "spot";
+        renderTimeline();
+        renderDetail();
+        renderMap();
+        return;
+      }
+
+      if (event.target.id === "removePhoto") {
+        removePhoto(state.selectedKey);
+        renderAll();
+        showToast("照片已移除，可以重新上傳");
+      }
+
+      if (event.target.id === "finishTrip") {
+        if (photoDoneCount() !== totalSpots) {
+          showToast("照片完成率 100% 後才能完成");
+          return;
+        }
+        $("#finishModal").classList.add("show");
+      }
+
+      if (event.target.id === "finishCancel") {
+        $("#finishModal").classList.remove("show");
+      }
+    });
+
+    $("#finishForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (photoDoneCount() !== totalSpots) {
+        showToast("照片完成率 100% 後才能送出");
+        return;
+      }
+      const message = $("#finishMessage").value.trim();
+      if (!message) return;
+      try {
+        await submitFinish(message);
+        $("#finishModal").classList.remove("show");
+        showToast("分享圖已產生");
+      } catch {
+        showToast("合成照片失敗，請稍後再試");
+      }
+    });
+
+    document.addEventListener("change", async event => {
+      if (event.target.id !== "quickCameraInput") return;
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("請選擇照片檔");
+        return;
+      }
+      try {
+        const dataUrl = await preparePhoto(file);
+        const saved = await persistPhoto(state.selectedKey, dataUrl);
+        renderAll();
+        showToast(saved ? "照片已上傳；建議匯出備份" : "已完成；請匯出備份保存");
+      } catch {
+        showToast("無法縮小這張照片。請重新拍照再試一次。");
+      }
+    });
+
+    async function init() {
+      renderAll();
+      try {
+        const dbPhotos = await loadDbPhotos();
+        state.photos = { ...state.photos, ...dbPhotos };
+        renderAll();
+      } catch {
+        // localStorage fallback was already loaded.
+      }
+    }
+
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "琦琦JimJim大冒險",
+  "short_name": "琦琦JimJim",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbfbf8",
+  "theme_color": "#48a076",
+  "description": "岡山、倉敷、尾道、廣島旅行照片任務",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
